@@ -33,9 +33,11 @@
   "author": "RootstockCollective",
   "license": "MIT",
   "dependencies": {
+    "big.js": "^7.0.1",
     "viem": "^2.21.0"
   },
   "devDependencies": {
+    "@types/big.js": "^6.2.2",
     "tsup": "^8.3.0",
     "typescript": "^5.6.0",
     "vitest": "^2.1.0"

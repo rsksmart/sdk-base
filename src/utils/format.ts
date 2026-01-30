@@ -14,14 +14,17 @@ export const PERCENTAGE_PRECISION = 10000
 /**
  * Format a bigint value to a human-readable string
  *
+ * For small values (< 0.0001), shows up to 8 decimals to capture significant digits.
+ * For larger values, shows up to 4 decimals.
+ *
  * @param value - Value in wei/smallest unit
  * @param decimals - Number of decimals (default: 18)
- * @param maxDecimals - Maximum decimals to display (default: 4)
+ * @param maxDecimals - Maximum decimals to display (default: auto-detected)
  */
 export function formatTokenAmount(
   value: bigint,
   decimals: number = DEFAULT_DECIMALS,
-  maxDecimals: number = 4
+  maxDecimals?: number
 ): string {
   const formatted = formatUnits(value, decimals)
   const [integer, decimal] = formatted.split('.')
@@ -30,7 +33,19 @@ export function formatTokenAmount(
     return integer ?? '0'
   }
 
-  const trimmed = decimal.slice(0, maxDecimals).replace(/0+$/, '')
+  let effectiveMaxDecimals = maxDecimals
+  if (effectiveMaxDecimals === undefined) {
+    const numValue = parseFloat(formatted)
+    if (numValue > 0 && numValue < 0.0001) {
+      effectiveMaxDecimals = 8
+    } else if (numValue > 0 && numValue < 1) {
+      effectiveMaxDecimals = 6
+    } else {
+      effectiveMaxDecimals = 4
+    }
+  }
+
+  const trimmed = decimal.slice(0, effectiveMaxDecimals).replace(/0+$/, '')
 
   return trimmed ? `${integer}.${trimmed}` : (integer ?? '0')
 }
