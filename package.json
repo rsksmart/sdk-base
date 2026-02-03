@@ -30,7 +30,7 @@
     "sdk",
     "utilities"
   ],
-  "author": "RootstockCollective",
+  "author": "Sebastian Guaqueta",
   "license": "MIT",
   "dependencies": {
     "big.js": "^7.0.1",

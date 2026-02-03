@@ -36,7 +36,7 @@ const mainnetTokenAddresses: TokenAddresses = {
  */
 const testnetTokenAddresses: TokenAddresses = {
   RIF: '0x19f64674d8a5b4e652319f5e239efd3bc969a1fe' as Address,
-  stRIF: '0xC4b091d97AD25ceA5922f09fe80711B7ACBbb16f' as Address,
+  stRIF: '0xe88d04062060b196b0f220afa784168d4b3657e9' as Address,
   USDRIF: '0x8dbf326e12a9ff37ed6ddf75ada548c2640a6482' as Address,
   COINBASE_ADDRESS: '0xf7ab6cfaebbadfe8b5494022c4c6db776bd63b6b' as Address,
 }
