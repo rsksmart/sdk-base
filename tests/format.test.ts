@@ -29,6 +29,17 @@ describe('formatTokenAmount', () => {
     expect(formatTokenAmount(1000000000000n)).toBe('0.000001')
   })
 
+  it('should show "<minimum" for extremely small non-zero values', () => {
+    expect(formatTokenAmount(1n)).toBe('<0.00000001')
+    expect(formatTokenAmount(100n)).toBe('<0.00000001')
+    expect(formatTokenAmount(1000000000n)).toBe('<0.00000001')
+  })
+
+  it('should display small values at the boundary correctly', () => {
+    expect(formatTokenAmount(10000000000n)).toBe('0.00000001')
+    expect(formatTokenAmount(9999999999n)).toBe('<0.00000001')
+  })
+
   it('should respect maxDecimals parameter', () => {
     expect(formatTokenAmount(1234567890123456789n, 18, 2)).toBe('1.23')
   })

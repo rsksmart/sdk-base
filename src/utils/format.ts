@@ -26,6 +26,10 @@ export function formatTokenAmount(
   decimals: number = DEFAULT_DECIMALS,
   maxDecimals?: number
 ): string {
+  if (value === 0n) {
+    return '0'
+  }
+
   const formatted = formatUnits(value, decimals)
   const [integer, decimal] = formatted.split('.')
 
@@ -46,6 +50,11 @@ export function formatTokenAmount(
   }
 
   const trimmed = decimal.slice(0, effectiveMaxDecimals).replace(/0+$/, '')
+
+  if (!trimmed && value > 0n) {
+    const minDisplay = '0.' + '0'.repeat(effectiveMaxDecimals - 1) + '1'
+    return `<${minDisplay}`
+  }
 
   return trimmed ? `${integer}.${trimmed}` : (integer ?? '0')
 }
