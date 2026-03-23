@@ -67,10 +67,16 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
-      - name: Clean install dependencies
+      # npm ci requires package-lock.json; use npm install when the lockfile is not committed
+      - name: Install dependencies
         run: |
           rm -rf dist
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "::notice::No package-lock.json in repo — using npm install. Commit a lockfile for reproducible installs (run: npm install --package-lock-only)."
+            npm install --no-audit --no-fund
+          fi
 
       - name: Update npm
         run: npm install -g npm@latest
