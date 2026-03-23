@@ -149,6 +149,17 @@ const abi = calculateABI(
 - **`createPriceService`**: optional `baseUrl`, `chainId`, `timeout` (defaults follow mainnet/testnet RWS URLs).
 - **`calculateABI`** / **`calculateCyclePayoutUSD`**: see `src/prices/abiCalculator.ts` for parameters and semantics.
 
+## Releasing to npm (GitHub Actions)
+
+Publishing runs on **Release published**. The workflow checks that the Git tag matches `version` in `package.json`.
+
+**Accepted tag formats** (either is valid):
+
+- `v0.2.1` → full ref `refs/tags/v0.2.1`
+- `0.2.1` → full ref `refs/tags/0.2.1`
+
+Bump `version` in `package.json`, commit, then create a GitHub Release whose tag matches that version (with or without the `v` prefix).
+
 ## Requirements
 
 - Node.js >= 18
