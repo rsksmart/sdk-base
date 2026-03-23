@@ -25,18 +25,16 @@ jobs:
         with:
           files: "package.json, README.md"
           
-      - name: Fail if required files missing
+      - name: File exists
         if: steps.check_files.outputs.files_exists != 'true'
-        # Fail if required files are missing
+        # Only runs if all of the files exists
         run: exit 1
 
-      - name: Get package.json package name and semver version
+      - name: Get package.json package name and match with repository name
         run: |
-          # Scoped npm names: @scope/pkg -> scope/pkg (must match github.repository)
-          echo PACKAGE_NAME=$(cat package.json | jq -r '.name | sub("^@"; "")') >> $GITHUB_OUTPUT
-          echo PACKAGE_VERSION=$(cat package.json | jq -r .version) >> $GITHUB_OUTPUT
-          # git+https://github.com/org/repo.git -> https://github.com/org/repo
-          echo PACKAGE_REPOSITORY=$(cat package.json | jq -r .repository.url | sed 's/^git+//' | sed 's/\.git$//') >> $GITHUB_OUTPUT
+          echo PACKAGE_NAME=$(cat package.json | jq -r .name | cut -f2 -d"\"" | cut -f2 -d"@") >> $GITHUB_OUTPUT
+          echo PACKAGE_VERSION="refs/tags/v"$(cat package.json | jq -r .version) >> $GITHUB_OUTPUT
+          echo PACKAGE_REPOSITORY=$(cat package.json | jq -r .repository.url | sed 's/\+https//') >> $GITHUB_OUTPUT
         id: get_package_info
 
       - name: Print outputs for debugging
@@ -44,9 +42,8 @@ jobs:
           echo "GitHub Repository: ${{ github.repository }}"
           echo "Package Name: ${{ steps.get_package_info.outputs.PACKAGE_NAME }}"
           echo "Github Tag: ${{ github.ref }}"
-          echo "package.json version: ${{ steps.get_package_info.outputs.PACKAGE_VERSION }}"
-          echo "Accepted tag forms: refs/tags/v${{ steps.get_package_info.outputs.PACKAGE_VERSION }} OR refs/tags/${{ steps.get_package_info.outputs.PACKAGE_VERSION }}"
-          echo "GitHub Repository URL: ${{ github.server_url }}/${{ github.repository }}"
+          echo "Package Version: ${{ steps.get_package_info.outputs.PACKAGE_VERSION }}"
+          echo "GitHub Repository URL: ${{ github.repositoryUrl }}"
           echo "Package Repository: ${{ steps.get_package_info.outputs.PACKAGE_REPOSITORY }}"
 
       - name: Check if package_name matches with repository name
@@ -54,22 +51,13 @@ jobs:
         # Fail if package name not properly configured
         run: exit 1
 
-      # Accept both refs/tags/vX.Y.Z (npm convention) and refs/tags/X.Y.Z
       - name: Check if package version matches with tag
-        run: |
-          VERSION="${{ steps.get_package_info.outputs.PACKAGE_VERSION }}"
-          REF="${{ github.ref }}"
-          if [ "$REF" = "refs/tags/v${VERSION}" ] || [ "$REF" = "refs/tags/${VERSION}" ]; then
-            echo "OK: release tag matches package.json version ${VERSION}"
-          else
-            echo "Mismatch: package.json version is ${VERSION}"
-            echo "Expected tag: refs/tags/v${VERSION} or refs/tags/${VERSION}"
-            echo "Got: ${REF}"
-            exit 1
-          fi
+        if: github.ref != steps.get_package_info.outputs.PACKAGE_VERSION
+        # Fail if package version not properly setted
+        run: exit 1
       
       - name: Check if package repository matches with repository
-        if: ${{ github.server_url }}/${{ github.repository }} != steps.get_package_info.outputs.PACKAGE_REPOSITORY
+        if: github.repositoryUrl != steps.get_package_info.outputs.PACKAGE_REPOSITORY
         # Fail if package repository doesn't match with repository
         run: exit 1
 
