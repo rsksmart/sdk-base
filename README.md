@@ -160,6 +160,8 @@ Publishing runs on **Release published**. The workflow checks that the Git tag m
 
 Bump `version` in `package.json`, commit, then create a GitHub Release whose tag matches that version (with or without the `v` prefix).
 
+The publish workflow also checks that `repository.url` in `package.json` matches this GitHub repo (e.g. `git+https://github.com/OWNER/REPO.git`). Use the same `OWNER/REPO` as in **Settings → General** on GitHub.
+
 ## Requirements
 
 - Node.js >= 18
