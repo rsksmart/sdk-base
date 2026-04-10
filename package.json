@@ -44,7 +44,7 @@
     "@types/big.js": "^6.2.2",
     "tsup": "^8.3.0",
     "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "vitest": "^4.1.4"
   },
   "peerDependencies": {
     "typescript": ">=5.0.0"
